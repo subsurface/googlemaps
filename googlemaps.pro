@@ -8,7 +8,6 @@ target.path = $$[QT_INSTALL_PLUGINS]/$$PLUGIN_TYPE
 INSTALLS += target
 TARGET = $$qt5LibraryTarget($$TARGET)
 
-
 qtHaveModule(location-private) {
 	QT += location-private
 } else {

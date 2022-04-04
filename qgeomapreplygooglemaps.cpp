@@ -14,10 +14,17 @@ QGeoMapReplyGooglemaps::QGeoMapReplyGooglemaps(QNetworkReply *reply, const QGeoT
             this,
             SLOT(networkFinished()));
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     connect(m_reply,
             SIGNAL(error(QNetworkReply::NetworkError)),
             this,
             SLOT(networkError(QNetworkReply::NetworkError)));
+#else
+    connect(m_reply,
+            &QNetworkReply::errorOccurred,
+            this,
+            &QGeoMapReplyGooglemaps::networkError);
+#endif
 }
 
 QGeoMapReplyGooglemaps::~QGeoMapReplyGooglemaps()

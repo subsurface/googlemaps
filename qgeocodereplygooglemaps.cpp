@@ -31,8 +31,12 @@ QGeoCodeReplyGooglemaps::QGeoCodeReplyGooglemaps(QNetworkReply *reply, QObject *
     :   QGeoCodeReply(parent), m_reply(reply)
 {
     connect(m_reply, SIGNAL(finished()), this, SLOT(networkReplyFinished()));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(networkReplyError(QNetworkReply::NetworkError)));
+#else
+    connect(m_reply, &QNetworkReply::errorOccurred, this, &QGeoCodeReplyGooglemaps::networkReplyError);
+#endif
 
     setLimit(1);
     setOffset(0);
@@ -91,7 +95,11 @@ void QGeoCodeReplyGooglemaps::networkReplyFinished()
                     QGeoRectangle r;
                     r.setTopRight(constructCoordiante(jaddressRanges.value("northeast").toObject()));
                     r.setBottomLeft(constructCoordiante(jaddressRanges.value("southwest").toObject()));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
                     location.setBoundingBox(r);
+#else
+                    location.setBoundingShape(r);
+#endif
                 }
 
                 QJsonArray jaddress = o.value("address_components").toArray();

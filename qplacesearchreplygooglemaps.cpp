@@ -163,7 +163,11 @@ QPlaceResult QPlaceSearchReplyGooglemaps::parsePlaceResult(const QJsonObject &it
     QGeoLocation location;
     location.setCoordinate(coordinate);
     location.setAddress(address);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     location.setBoundingBox(parseBoundingBox(item.value(QStringLiteral("boundingbox")).toArray()));
+#else
+    location.setBoundingShape(parseBoundingBox(item.value(QStringLiteral("boundingbox")).toArray()));
+#endif
 
     place.setLocation(location);
 

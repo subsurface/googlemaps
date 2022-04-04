@@ -322,11 +322,11 @@ void QPlaceManagerEngineGooglemaps::categoryReplyFinished()
             QRegularExpressionMatchIterator i = regex.globalMatch(page);
             while (i.hasNext()) {
                 QRegularExpressionMatch match = i.next();
-                QString name = match.capturedRef(1).toString();
-                QString tagKey = match.capturedRef(2).toString();
-                QString tagValue = match.capturedRef(3).toString();
-                QString op = match.capturedRef(4).toString();
-                QString plural = match.capturedRef(5).toString();
+                QString name = match.captured(1);
+                QString tagKey = match.captured(2);
+                QString tagValue = match.captured(3);
+                QString op = match.captured(4);
+                QString plural = match.captured(5);
 
                 // Only interested in any operator plural forms
                 if (op != QLatin1String("-") || plural != QLatin1String("Y"))
@@ -402,8 +402,13 @@ void QPlaceManagerEngineGooglemaps::fetchNextCategoryLocale()
 
     m_categoriesReply = m_networkManager->get(QNetworkRequest(requestUrl));
     connect(m_categoriesReply, SIGNAL(finished()), this, SLOT(categoryReplyFinished()));
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     connect(m_categoriesReply, SIGNAL(error(QNetworkReply::NetworkError)),
             this, SLOT(categoryReplyError()));
+#else
+    connect(m_categoriesReply, &QNetworkReply::errorOccurred,
+            this, &QPlaceManagerEngineGooglemaps::categoryReplyError);
+#endif
 }
 
 
